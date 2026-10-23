@@ -1,0 +1,316 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My Phone ♡</title>
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;background:#17171b;color:white;
+  font-family:Arial,sans-serif;
+  display:flex;justify-content:center;align-items:center;
+  min-height:100vh;padding:12px
+}
+.phone{
+  width:min(390px,100%);height:min(780px,92dvh);
+  min-height:570px;border:7px solid #62636a;
+  border-radius:44px;padding:7px;
+  background:#25252a;position:relative;
+  overflow:hidden;box-shadow:0 0 0 2px #999
+}
+.screen{
+  height:100%;border-radius:32px;overflow:hidden;
+  position:relative;background:#c5d8e9;
+}
+.wallpaper{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;z-index:0
+}
+.layer{position:absolute;inset:0;z-index:1;padding:20px}
+.status{display:flex;justify-content:space-between;font-size:13px}
+#lock{text-align:center;padding-top:70px}
+#clock{font-size:55px;margin:5px}
+input,textarea{
+  border:0;border-radius:12px;padding:12px;
+  max-width:100%;font:inherit
+}
+button{
+  border:0;border-radius:14px;padding:11px;
+  cursor:pointer;font:inherit
+}
+.primary{background:#f6d4e2;color:#493442}
+#home{display:none}
+.grid{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:19px 8px;margin-top:55px;text-align:center
+}
+.app{background:none;color:white;padding:0;font-size:11px}
+.icon{
+  width:54px;height:54px;border-radius:15px;
+  background:#fff;display:flex;align-items:center;
+  justify-content:center;font-size:28px;margin:0 auto 6px;
+  box-shadow:0 3px 8px #0003
+}
+.dock{
+  position:absolute;bottom:12px;left:10px;right:10px;
+  border-radius:25px;background:#ffffff55;
+  display:flex;justify-content:space-around;padding:12px
+}
+.dock button{background:#ffffffdd;font-size:25px}
+.panel{
+  display:none;position:absolute;inset:0;z-index:5;
+  background:#f8f5f8;color:#382e38;padding:20px;
+  overflow-y:auto
+}
+.panel h2{margin-top:12px}
+.back{background:#eadce8;margin-bottom:12px}
+.messages{height:45%;overflow:auto}
+.bubble{
+  background:#f5dce9;padding:10px;border-radius:15px;
+  margin:8px 0;max-width:85%;overflow-wrap:anywhere
+}
+.me{background:#d9e7ff;margin-left:auto}
+#toast{
+  display:none;position:absolute;top:45px;left:12px;right:12px;
+  background:#ffffffed;color:#222;padding:14px;
+  border-radius:16px;z-index:10
+}
+#call{
+  display:none;position:absolute;inset:0;z-index:8;
+  background:#273e50;color:white;text-align:center;
+  padding:100px 20px
+}
+#call button{margin:8px}
+.gallery{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:5px
+}
+.gallery img{width:100%;aspect-ratio:1;object-fit:cover}
+.note{width:100%;height:230px}
+</style>
+</head>
+<body>
+<div class="phone">
+<div class="screen">
+<img class="wallpaper" id="wallpaper"
+src="https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=800"
+alt="Fondo de pantalla">
+
+<div class="layer">
+<div class="status"><span id="time">23:03</span><span>● Wi-Fi ▰</span></div>
+
+<div id="lock">
+<div style="font-size:13px">WELCOME BACK ♡</div>
+<div id="clock">23:03</div>
+<p>Desbloquea tu teléfono</p>
+<input id="password" type="password"
+placeholder="Contraseña" style="width:150px">
+<br><br>
+<button class="primary" onclick="unlock()">Desbloquear ♡</button>
+<p id="error"></p>
+</div>
+
+<div id="home">
+<div style="text-align:center;margin-top:12px">
+Mi pequeño mundo ♡
+</div>
+<div class="grid">
+<button class="app" onclick="openApp('camera')"><div class="icon">📷</div>Cámara</button>
+<button class="app" onclick="openApp('gallery')"><div class="icon">🌸</div>Galería</button>
+<button class="app" onclick="openApp('notes')"><div class="icon">📝</div>Notas</button>
+<button class="app" onclick="openApp('music')"><div class="icon">🎵</div>Música</button>
+<button class="app" onclick="openApp('phone')"><div class="icon">📞</div>Teléfono</button>
+<button class="app" onclick="openApp('chat')"><div class="icon">💬</div>KakaoTalk</button>
+<button class="app"><div class="icon">𝕏</div>X</button>
+<button class="app"><div class="icon">🎮</div>Roblox</button>
+</div>
+<div class="dock">
+<button onclick="openApp('phone')">📞</button>
+<button onclick="openApp('gallery')">🌄</button>
+<button onclick="openApp('chat')">💬</button>
+</div>
+</div>
+</div>
+
+<div id="toast" onclick="openApp('chat')">
+♡ Nuevo mensaje<br><span id="notice">Tienes un mensaje nuevo</span>
+</div>
+
+<div class="panel" id="camera">
+<button class="back" onclick="closeApp()">← Inicio</button>
+<h2>📷 Cámara</h2>
+<p>Selecciona una foto de tu dispositivo.</p>
+<input type="file" accept="image/*" capture="environment"
+onchange="addPhoto(event)">
+<div id="preview"></div>
+</div>
+
+<div class="panel" id="gallery">
+<button class="back" onclick="closeApp()">← Inicio</button>
+<h2>🌸 Galería</h2>
+<p>Tus recuerdos ♡</p>
+<input type="file" accept="image/*" multiple
+onchange="addPhotos(event)">
+<div class="gallery" id="photos"></div>
+</div>
+
+<div class="panel" id="notes">
+<button class="back" onclick="closeApp()">← Inicio</button>
+<h2>📝 Notas</h2>
+<textarea id="note" class="note"
+placeholder="Escribe tus secretos aquí..."></textarea>
+<button class="primary" onclick="saveNote()">Guardar nota</button>
+</div>
+
+<div class="panel" id="music">
+<button class="back" onclick="closeApp()">← Inicio</button>
+<h2>🎵 Música</h2>
+<p>Elige una canción de tu dispositivo.</p>
+<input type="file" accept="audio/*" onchange="playMusic(event)">
+<audio id="player" controls style="width:100%;margin-top:20px"></audio>
+</div>
+
+<div class="panel" id="phone">
+<button class="back" onclick="closeApp()">← Inicio</button>
+<h2>📞 Teléfono</h2>
+<input id="contact" placeholder="Nombre del contacto">
+<button class="primary" onclick="ring()">Simular llamada</button>
+<h3>Registro de llamadas</h3>
+<div id="history"></div>
+</div>
+
+<div class="panel" id="chat">
+<button class="back" onclick="closeApp()">← Inicio</button>
+<h2>💬 KakaoTalk</h2>
+<input id="friend" placeholder="Nombre del contacto"
+value="Mi persona favorita">
+<div class="messages" id="messages">
+<div class="bubble">Holaaa ♡</div>
+<div class="bubble me">Holi, ¿cómo estás?</div>
+</div>
+<input id="reply" placeholder="Escribe un mensaje..."
+style="width:72%">
+<button class="primary" onclick="sendMessage()">➤</button>
+<br><br>
+<input type="file" accept="audio/*" onchange="sendAudio(event)">
+<p>Enviar un audio 🎙️</p>
+<div id="audioList"></div>
+<button class="primary" onclick="notifyMessage()">Simular notificación</button>
+</div>
+
+<div id="call">
+<h2 id="caller">Llamada entrante</h2>
+<p>Teléfono virtual ♡</p>
+<button style="background:#8bd49d" onclick="answer()">Aceptar</button>
+<button style="background:#f39b9b" onclick="endCall()">Rechazar</button>
+<div id="callActions" style="display:none">
+<p>Llamada conectada · simulación</p>
+<button onclick="endCall()">Colgar</button>
+</div>
+</div>
+
+</div>
+</div>
+
+<script>
+const PASSWORD="0725";
+let currentCall="";
+let photos=[];
+
+function unlock(){
+ if(document.getElementById("password").value===PASSWORD){
+  document.getElementById("lock").style.display="none";
+  document.getElementById("home").style.display="block";
+  document.getElementById("error").textContent="";
+ }else{
+  document.getElementById("error").textContent="Contraseña incorrecta ♡";
+ }
+}
+
+function openApp(id){
+ document.querySelectorAll(".panel").forEach(p=>p.style.display="none");
+ document.getElementById(id).style.display="block";
+ if(id==="notes") document.getElementById("note").value=localStorage.getItem("myNote")||"";
+}
+function closeApp(){
+ document.querySelectorAll(".panel").forEach(p=>p.style.display="none");
+}
+function saveNote(){
+ localStorage.setItem("myNote",document.getElementById("note").value);
+ alert("Nota guardada ♡");
+}
+function addPhotos(event){
+ [...event.target.files].forEach(file=>{
+  const url=URL.createObjectURL(file);
+  photos.push(url);
+  const img=document.createElement("img");
+  img.src=url;
+  img.onclick=()=>window.open(url,"_blank");
+  document.getElementById("photos").appendChild(img);
+ });
+}
+function addPhoto(event){
+ if(!event.target.files[0])return;
+ const url=URL.createObjectURL(event.target.files[0]);
+ document.getElementById("preview").innerHTML="";
+ const img=document.createElement("img");
+ img.src=url;img.style.width="100%";
+ document.getElementById("preview").appendChild(img);
+ photos.push(url);
+ const galleryImg=document.createElement("img");
+ galleryImg.src=url;
+ galleryImg.onclick=()=>window.open(url,"_blank");
+ document.getElementById("photos").appendChild(galleryImg);
+}
+function playMusic(event){
+ const file=event.target.files[0];
+ if(!file)return;
+ const player=document.getElementById("player");
+ player.src=URL.createObjectURL(file);player.play();
+}
+function sendMessage(){
+ const input=document.getElementById("reply");
+ if(!input.value.trim())return;
+ const b=document.createElement("div");
+ b.className="bubble me";b.textContent=input.value;
+ document.getElementById("messages").appendChild(b);
+ input.value="";
+ document.getElementById("messages").scrollTop=99999;
+}
+function notifyMessage(){
+ document.getElementById("notice").textContent=
+ document.getElementById("friend").value+": Tienes un mensaje ♡";
+ document.getElementById("toast").style.display="block";
+ setTimeout(()=>document.getElementById("toast").style.display="none",5000);
+}
+function sendAudio(event){
+ const file=event.target.files[0];if(!file)return;
+ const audio=document.createElement("audio");
+ audio.controls=true;audio.src=URL.createObjectURL(file);
+ document.getElementById("audioList").appendChild(audio);
+}
+function ring(){
+ currentCall=document.getElementById("contact").value||"Contacto";
+ document.getElementById("caller").textContent="Llamando a "+currentCall+"...";
+ document.getElementById("call").style.display="block";
+ document.getElementById("callActions").style.display="none";
+ document.getElementById("history").innerHTML+="<p>📞 "+currentCall+" · llamada simulada</p>";
+}
+function answer(){
+ document.getElementById("caller").textContent=currentCall;
+ document.getElementById("callActions").style.display="block";
+}
+function endCall(){
+ document.getElementById("call").style.display="none";
+}
+function updateClock(){
+ const d=new Date();
+ const t=d.toLocaleTimeString("es-CL",{hour:"2-digit",minute:"2-digit",hour12:false});
+ document.getElementById("clock").textContent=t;
+ document.getElementById("time").textContent=t;
+}
+updateClock();setInterval(updateClock,10000);
+</script>
+</body>
+</html>
